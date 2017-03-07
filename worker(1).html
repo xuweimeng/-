@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<title>js图片轮播幻灯片UC浏览器官网焦点图片切换</title>
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+	</head>
+
+	<body>
+
+		<div id="imageShow">
+			<div id="imgshow_mask"></div>
+			<ul class="imagebg" id="imagebg">
+				<li data-sPic="images/index_ya_s.jpg">
+					<a href="#" class="bannerbg_main" style="background:url(images/index_ya.jpg) 50% 50% no-repeat;"></a>
+				</li>
+				<li data-sPic="images/index_uc9_s.jpg">
+					<a href="#" class="bannerbg_main" style="background:url(images/index_uc9.jpg) 50% 50% no-repeat;"></a>
+				</li>
+				<li data-sPic="images/index_newlogo_s.jpg">
+					<a href="#" class="bannerbg_main" style="background:url(images/index_newlogo.jpg) 50% 50% no-repeat;"></a>
+				</li>
+				<li data-sPic="images/index_iPad2.0_s.jpg">
+					<a href="#" class="bannerbg_main" style="background:url(images/index_iPad2.0.jpg) 50% 50% no-repeat;"></a>
+				</li>
+				<li data-sPic="images/index_hundred_million_s.jpg">
+					<a href="#" class="bannerbg_main" style="background:url(images/index_hundred_million.jpg) 50% 50% no-repeat;"></a>
+				</li>
+				<li data-sPic="images/index_idg_s.jpg">
+					<a href="#" class="bannerbg_main" style="background:url(images/index_idg.jpg) 50% 50% no-repeat;"></a>
+				</li>
+				<li data-sPic="images/index_callmaster5.0_s.jpg">
+					<a href="#" class="bannerbg_main" style="background:url(images/index_callmaster5.0.jpg) 50% 50% no-repeat;"></a>
+				</li>
+				<li data-sPic="images/banner_home_1_s.jpg">
+					<a href="#" class="bannerbg_main" style="background:url(images/banner_home_1.jpg) 50% 50% no-repeat;"></a>
+				</li>
+				<li data-sPic="images/banner_home_3_s.jpg" style="background:#a9a9a9 url(images/banner_home_3.jpg) center no-repeat;">
+					<a href="#" class="bannerbg_main" style="background:url(images/banner_home_3.jpg) 50% 50% no-repeat;"></a>
+				</li>
+			</ul>
+
+			<div class="scrollbg">
+				<div class="scroll">
+					<a id="left_img_btn" class="s_pre" href="javascript:void(0)"></a>
+					<div class="current" id="current"></div>
+					<div class="outScroll_pic">
+						<ul class="scroll_pic cls" id="small_pic"></ul>
+					</div>
+					<a id="right_img_btn" class="s_next" href="javascript:void(0)"></a>
+				</div>
+			</div>
+
+		</div>
+
+		<script src="js/imgSlider.js"></script>
+		<script src="js/common.js"></script>
+		<script type="text/javascript">
+			var oImagebg = document.getElementById("imagebg");
+			var aImgbgLi = oImagebg.getElementsByTagName("li");
+			var oSmallpic = document.getElementById("small_pic");
+			var aSmallpicLi = oSmallpic.getElementsByTagName("li");
+			var oCurrent = document.getElementById("current");
+			var oPre = document.getElementById("left_img_btn");
+			var oNext = document.getElementById("right_img_btn");
+			oImagebg.innerHTML += oImagebg.innerHTML;
+			var str = "";
+			for (var i = 0; i < aImgbgLi.length; i++) {
+				str += "<li><img src='" + aImgbgLi[i].getAttribute("data-sPic") + "'/>";
+			}
+			oSmallpic.innerHTML = str;
+			oCurrent.style.left = "77px";
+			aImgbgLi[0].style.opacity = 1;
+			aImgbgLi[0].style.filter = "alpha(opacity=" + 100 + ")";
+			var i = 0;
+			var k = 0;
+			var index = 0;
+			var bTag = true;
+			var bClick = true;
+			var perWidth = aSmallpicLi[0].offsetWidth + parseInt(getStyle(aSmallpicLi[0], "marginLeft")) * 2;
+			var timer = setInterval(move, 3000);
+
+			function move() {
+				clearInterval(timer);
+				i++;
+				bTag = false;
+				for (var j = 0; j < aImgbgLi.length; j++) {
+					if (i == j) {
+						continue;
+					} else {
+						aImgbgLi[j].style.opacity = 0;
+						aImgbgLi[j].style.filter = "alpha(opacity=" + 0 + ")";
+					}
+				}
+				startMove(aImgbgLi[i], {
+					"opacity": 100
+				}, initVal);
+				console.log(bClick);
+				if (bClick) {
+					if (index == 4) {
+						if (k == aSmallpicLi.length / 2) {
+							k = 0;
+							oSmallpic.style.left = 0;
+
+						}
+						k++;
+						startMove(oSmallpic, {
+							"left": -perWidth * k
+						});
+
+					} else {
+						index++;
+						startMove(oCurrent, {
+							"left": perWidth * index + 77
+						})
+					}
+				}
+			}
+
+			function initVal() {
+				clearInterval(timer);
+				timer = setInterval(move, 3000);
+				if (i == aImgbgLi.length / 2) {
+					i = 0;
+				}
+				bTag = true;
+				bClick = true;
+			}
+			oPre.onclick = function() {
+				bClick = false;
+				if (bTag) {
+					clearInterval(timer);
+					if (i == 0) {
+						i = aImgbgLi.length - 2;
+					} else {
+						i = i - 2;
+					}
+					if (index == 0) {
+						if (!parseInt(oSmallpic.style.left)) {
+							oSmallpic.style.left = -(aSmallpicLi.length / 2) * perWidth + "px";
+							k = aSmallpicLi.length / 2;
+							startMove(oSmallpic, {
+								"left": -perWidth * (--k)
+							});
+						} else {
+							k--
+							startMove(oSmallpic, {
+								"left": -perWidth * k
+							})
+						}
+					} else {
+						index--;
+						startMove(oCurrent, {
+							"left": perWidth * index + 77
+						})
+					}
+					move();
+				}
+			}
+			oNext.onclick = function() {
+				bClick = false;
+				if (bTag) {
+					clearInterval(timer);
+					if (i == aImgbgLi.length / 2) {
+						i = 0
+					}
+					if (index == 4) {
+						if (k == aSmallpicLi.length / 2) {
+							k = 0;
+							oSmallpic.style.left = 0;
+
+						}
+						k++;
+						startMove(oSmallpic, {
+							"left": -perWidth * k
+						});
+
+					} else {
+						index++;
+						startMove(oCurrent, {
+							"left": perWidth * index + 77
+						})
+					}
+					move();
+				}
+			}
+			for (var m = 0; m < aSmallpicLi.length; m++) {
+				aSmallpicLi[m].index = m;
+				aSmallpicLi[m].onclick = function() {
+					bClick = false;
+					i = this.index - 1;
+					index = Math.floor((this.offsetLeft - Math.abs(oSmallpic.offsetLeft)) / perWidth);
+					console.log(this.offsetLeft, oSmallpic.offsetLeft, index);
+					startMove(oCurrent, {
+						"left": perWidth * index + 77
+					})
+					move();
+				}
+			}
+		</script>
+		<script>
+//			img.init();
+//			img.play(0);
+//			//阻止事件冒泡
+//			function estop(e) {
+//				var e = arguments.callee.caller.arguments[0] || event;
+//				if (e && e.stopPropagation) {
+//					//因此它支持W3C的stopPropagation()方法
+//					e.stopPropagation();
+//				} else {
+//					//否则，我们需要使用IE的方式来取消事件冒泡
+//					window.event.cancelBubble = true;
+//					return false;
+//				}
+//			}
+		</script>
+
+	</body>
+
+</html>
